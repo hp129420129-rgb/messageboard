@@ -151,11 +151,26 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
+**ここで注意**：Amazon Linux の php-fpm は、最初は TCP ではなく **Unix ソケット**を使っています。
+そのまま nginx を動かすと **502 Bad Gateway** になるので、php-fpm を TCP 9000 に変えます。
+
+```bash
+sudo sed -i 's|^listen = .*|listen = 127.0.0.1:9000|' /etc/php-fpm.d/www.conf
+sudo systemctl restart php-fpm
+
+# 9000 番が LISTEN しているか確認する
+sudo ss -tlnp | grep 9000
+```
+
 ### 4-9. 権限を設定する
 
 ```bash
 sudo chown -R nginx:nginx /var/www/messageboard
 sudo chmod -R 755 /var/www/messageboard
+
+# uploads フォルダは PHP が書きこむので、所有者を apache にする
+# Amazon Linux の php-fpm は apache ユーザーで動いているため
+sudo chown -R apache:nginx /var/www/messageboard/uploads
 sudo chmod -R 775 /var/www/messageboard/uploads
 
 # SELinux の設定（これをしないと 403 エラーになります）
@@ -204,9 +219,9 @@ git push -u origin main
 
 | エラー | 原因 | 直し方 |
 | --- | --- | --- |
-| 502 Bad Gateway | PHP-FPM が動いていない | `sudo systemctl restart php-fpm` |
+| 502 Bad Gateway | php-fpm が止まっている、または Unix ソケットのままになっている | 4-8 の php-fpm 設定を確認して `sudo systemctl restart php-fpm` |
 | 403 Forbidden | 権限か SELinux の設定が足りない | 4-9 をもう一度やる |
 | 500 エラー | データベースのパスワードが違う | `config.php` を直す |
-| 画像がアップロードできない | `uploads` に書く権限がない | 4-9 をもう一度やる |
+| 画像がアップロードできない | `uploads` の所有者が `nginx` になっている（php-fpm は `apache` で動く） | 4-9 の `chown apache:nginx` をもう一度やる |
 | 文字化けする | 文字コードが utf8mb4 ではない | 4-4 と 4-7 をもう一度やる |
 

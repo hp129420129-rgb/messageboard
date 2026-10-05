@@ -1,6 +1,4 @@
-/* ==================================
-   メッセージボードのスタイル
-   ================================== */
+/* メッセージボードの CSS */
 
 body {
     font-family: "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif;
@@ -22,7 +20,7 @@ h2 {
     padding-left: 8px;
 }
 
-/* ---------- 入力フォーム ---------- */
+/* 入力フォーム */
 .form-box {
     background-color: #ffffff;
     border: 1px solid #cccccc;
@@ -62,7 +60,7 @@ textarea {
     background-color: #264d73;
 }
 
-/* ---------- エラーメッセージ ---------- */
+/* エラー表示 */
 .error {
     background-color: #ffe5e5;
     border: 1px solid #ff9999;
@@ -71,7 +69,7 @@ textarea {
     padding: 10px 10px 10px 30px;
 }
 
-/* ---------- 投稿 ---------- */
+/* 投稿 */
 .post {
     background-color: #ffffff;
     border: 1px solid #cccccc;
@@ -127,7 +125,7 @@ textarea {
     color: #336699;
 }
 
-/* ---------- スマートフォンのとき ---------- */
+/* スマートフォンのとき */
 @media screen and (max-width: 600px) {
     body {
         padding: 10px;

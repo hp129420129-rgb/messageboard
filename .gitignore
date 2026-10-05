@@ -6,3 +6,7 @@ uploads/*
 *.log
 .DS_Store
 Thumbs.db
+
+# SSH の鍵は絶対に Git に入れない
+*.pem
+*.key

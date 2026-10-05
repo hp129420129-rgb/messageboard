@@ -1,30 +1,26 @@
 <?php
 // ==========================================
 //  index.php
-//  メインページ
-//  入力フォームと、投稿の一覧を表示する
+//  トップページ（フォームと投稿一覧）
 // ==========================================
 
-// データベースに接続する（config.php を読みこむ）
+// データベースに接続
 require_once "config.php";
 
-// エラーメッセージを入れておく配列
+// エラーメッセージ用
 $errors = array();
 
-// フォームに入っていた値をおぼえておく（エラーのときに使う）
+// 入力した値を覚えておく（エラーのときに入れ直す）
 $name = "";
 $message = "";
 
-// ------------------------------------------
-//  投稿ボタンが押されたときの処理
-// ------------------------------------------
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // フォームから送られた文字を受け取る
+    // フォームの値を受け取る
     $name = trim($_POST["name"]);
     $message = trim($_POST["message"]);
 
-    // 名前が空だったら「匿名」にする
+    // 名前が空なら「匿名」
     if ($name == "") {
         $name = "匿名";
     }
@@ -40,36 +36,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors[] = "メッセージは500文字までにしてください。";
     }
 
-    // ------------------------------------------
-    //  画像のアップロード
-    // ------------------------------------------
+    // 画像のアップロード
     $image_path = NULL;
 
-    // 画像が選ばれているかチェックする（4 は「ファイルを選んでいない」という意味）
+    // ファイルが選ばれているか（4 は選んでいないという意味）
     if (isset($_FILES["image"]) && $_FILES["image"]["error"] != 4) {
 
         $file_size = $_FILES["image"]["size"];
         $file_name = $_FILES["image"]["name"];
 
-        // 拡張子を取り出す（小文字にそろえる）
+        // 拡張子を取り出す
         $ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
         $ok_ext = array("jpg", "jpeg", "png", "gif");
 
-        // アップロードでエラーがあったとき（サーバーの設定より大きいファイルなど）
+        // アップロードでエラーがあったとき
         if ($_FILES["image"]["error"] != 0) {
             $errors[] = "画像をアップロードできませんでした。";
         }
-        // ファイルの大きさをチェックする（5MB = 5 * 1024 * 1024 バイト）
+        // 5MB より大きいとき
         else if ($file_size > 5 * 1024 * 1024) {
             $errors[] = "画像は5MBまでです。";
         }
-        // 画像の種類をチェックする
+        // 画像の種類をチェック
         else if (!in_array($ext, $ok_ext)) {
             $errors[] = "jpg / png / gif の画像だけアップロードできます。";
         }
-        // 問題がなければ uploads フォルダに保存する
+        // 問題なければ保存する
         else {
-            // 同じファイル名にならないように、新しい名前を作る
+            // ファイル名がかぶらないように新しく作る
             $new_name = date("YmdHis") . "_" . rand(1000, 9999) . "." . $ext;
             $save_path = "uploads/" . $new_name;
 
@@ -81,31 +75,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // ------------------------------------------
-    //  エラーがなければデータベースに保存する
-    // ------------------------------------------
+    // エラーがなければ保存
     if (count($errors) == 0) {
 
-        // 投稿した時間を作る
+        // 投稿した時間
         $created_at = date("Y-m-d H:i:s");
 
-        // SQL インジェクションを防ぐために prepare を使う
-        // 「?」のところに後から値を入れるので、SQL を壊されない
+        // SQL インジェクション対策で prepare を使う
         $sql = "INSERT INTO posts (name, message, image_path, created_at) VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ssss", $name, $message, $image_path, $created_at);
         $stmt->execute();
         $stmt->close();
 
-        // そのまま表示すると、再読み込みで二重投稿になるので一覧へ移動する
+        // 二重投稿を防ぐためにリダイレクト
         header("Location: index.php");
         exit;
     }
 }
 
-// ------------------------------------------
-//  投稿を新しい順に全部読む
-// ------------------------------------------
+// 投稿を新しい順に取ってくる
 $sql = "SELECT * FROM posts ORDER BY id DESC";
 $result = $conn->query($sql);
 ?>
@@ -113,7 +102,7 @@ $result = $conn->query($sql);
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <!-- スマートフォンでも見やすくする -->
+    <!-- スマートフォン用 -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>メッセージボード</title>
     <link rel="stylesheet" href="style.css">
@@ -122,7 +111,7 @@ $result = $conn->query($sql);
 
 <h1>メッセージボード</h1>
 
-<!-- ========== 入力フォーム ========== -->
+<!-- 入力フォーム -->
 <div class="form-box">
     <h2>メッセージを書く</h2>
 
@@ -156,7 +145,7 @@ $result = $conn->query($sql);
     </form>
 </div>
 
-<!-- ========== 投稿の一覧 ========== -->
+<!-- 投稿の一覧 -->
 <h2>投稿一覧</h2>
 
 <?php if ($result->num_rows == 0): ?>
@@ -167,9 +156,9 @@ $result = $conn->query($sql);
     <div class="post" id="post-<?php echo $row["id"]; ?>">
 
         <p class="post-head">
-            <!-- 投稿番号（データベースで自動的につく番号） -->
+            <!-- 投稿番号（DBで自動でつく） -->
             <span class="no">No.<?php echo $row["id"]; ?></span>
-            <!-- 名前と投稿時間も、XSS を防ぐために h() を通す -->
+            <!-- XSS 対策で h() を通す -->
             <span class="name"><?php echo h($row["name"]); ?></span>
             <span class="date"><?php echo h($row["created_at"]); ?></span>
         </p>

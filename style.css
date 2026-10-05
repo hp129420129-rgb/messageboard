@@ -1,0 +1,148 @@
+/* ==================================
+   メッセージボードのスタイル
+   ================================== */
+
+body {
+    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif;
+    background-color: #f2f2f2;
+    color: #333333;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+h1 {
+    text-align: center;
+    color: #336699;
+}
+
+h2 {
+    color: #336699;
+    border-left: 6px solid #336699;
+    padding-left: 8px;
+}
+
+/* ---------- 入力フォーム ---------- */
+.form-box {
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    padding: 16px;
+    max-width: 600px;
+    margin: 0 auto 30px auto;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #bbbbbb;
+    border-radius: 4px;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+.button {
+    background-color: #336699;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 24px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #264d73;
+}
+
+/* ---------- エラーメッセージ ---------- */
+.error {
+    background-color: #ffe5e5;
+    border: 1px solid #ff9999;
+    border-radius: 4px;
+    color: #cc0000;
+    padding: 10px 10px 10px 30px;
+}
+
+/* ---------- 投稿 ---------- */
+.post {
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.post-head {
+    border-bottom: 1px dotted #cccccc;
+    padding-bottom: 6px;
+    margin: 0 0 8px 0;
+}
+
+/* 投稿番号 */
+.no {
+    background-color: #e6f0ff;
+    color: #336699;
+    font-weight: bold;
+    border-radius: 4px;
+    padding: 2px 8px;
+}
+
+.name {
+    font-weight: bold;
+    margin-left: 8px;
+}
+
+.date {
+    color: #888888;
+    font-size: 13px;
+}
+
+.post-message {
+    margin: 8px 0;
+    word-wrap: break-word;
+}
+
+.post img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+}
+
+.link {
+    font-size: 13px;
+}
+
+.link a {
+    color: #336699;
+}
+
+/* ---------- スマートフォンのとき ---------- */
+@media screen and (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+
+    .form-box,
+    .post {
+        padding: 12px;
+    }
+
+    .button {
+        width: 100%;
+    }
+}

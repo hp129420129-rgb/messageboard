@@ -1,0 +1,8 @@
+# アップロードされた画像は Git に入れない
+uploads/*
+!uploads/.gitkeep
+
+# その他
+*.log
+.DS_Store
+Thumbs.db
